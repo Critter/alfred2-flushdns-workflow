@@ -4,8 +4,6 @@
 <dict>
 	<key>bundleid</key>
 	<string>de.draegerit.alfred.flushdns</string>
-	<key>category</key>
-	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>AAE2193C-E6C1-4A1C-8A17-774AF8868DCF</key>
@@ -44,21 +42,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>keyword</key>
-				<string>fdns</string>
-				<key>subtext</key>
-				<string>This command flushes the DNS cache. You can already enter your password after a space.</string>
-				<key>text</key>
-				<string>Flush DNS cache</string>
-				<key>withspace</key>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
 				<true/>
+				<key>output</key>
+				<integer>0</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>Flush DNS</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>CD69778A-A49B-44D1-9F54-B24359DEF8B8</string>
+			<string>159A291E-3339-491E-8D3F-79091BE0319B</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -67,11 +69,17 @@
 			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-  if q is equal to "" then
-	set output to (do shell script "killall -HUP mDNSResponder;echo $?" with administrator privileges)
+
+ set osver to system version of (system info)
+ set cmd to "killall -HUP mDNSResponder;echo $?"
+ if osver is greater than 10.10 then
+ 	set cmd to "discoveryutil mdnsflushcache; echo $?"
+ end if
+ if q is equal to "" then
+	set output to (do shell script cmd with administrator privileges)
   else
 	set pwd to q
-	set output to (do shell script "killall -HUP mDNSResponder;echo $?" password pwd with administrator privileges)
+	set output to (do shell script cmd password pwd with administrator privileges)
   end if
 
   if output is equal to "0" then
@@ -93,25 +101,21 @@ end alfred_script</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>output</key>
-				<integer>0</integer>
-				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
-				<false/>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>fdns</string>
+				<key>subtext</key>
+				<string>This command flushes the DNS cache. You can already enter your password after a space.</string>
 				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>Flush DNS</string>
+				<string>Flush DNS cache</string>
+				<key>withspace</key>
+				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.input.keyword</string>
 			<key>uid</key>
-			<string>159A291E-3339-491E-8D3F-79091BE0319B</string>
+			<string>CD69778A-A49B-44D1-9F54-B24359DEF8B8</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
